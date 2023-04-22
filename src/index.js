@@ -6,7 +6,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Provider } from "react-redux";
 import store from "./app/store";
 const theme = createTheme({});
-console.log(theme)
+
 ReactDOM.render(
     <Provider store={store}>
         <ThemeProvider theme={theme}>
