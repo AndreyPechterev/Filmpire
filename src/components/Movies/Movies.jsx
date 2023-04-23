@@ -3,7 +3,7 @@ import { Box, useMediaQuery } from "@mui/system";
 import { CircularProgress, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useGetMoviesQuery } from "../../services/TMDB";
-import { MovieList } from "..";
+import { MovieList, Pagination } from "..";
 
 const Movies = () => {
     const [page, setPage] = useState(1);
@@ -13,7 +13,7 @@ const Movies = () => {
     const { data, error, isFetching } = useGetMoviesQuery({
         genreIdOrCategoryName,
         page,
-        searchQuery
+        searchQuery,
     });
 
     if (isFetching) {
@@ -40,7 +40,8 @@ const Movies = () => {
 
     return (
         <div>
-            <MovieList movies={data} />
+            <MovieList movies={data} numberOfMovies={18}/>
+            <Pagination currentPage={page} setPage={setPage} totalPages={data?.totalPages}/>
         </div>
     );
 };
