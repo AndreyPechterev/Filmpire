@@ -1,21 +1,26 @@
 import React from "react";
 import { Typography, Button } from "@mui/material";
 import useStyles from "./styles";
+import { useDispatch } from "react-redux";
+import { selectPage } from "../../features/currentGenreOrCategory";
 
-const Pagination = ({ currentPage, setPage, totalPages }) => {
+const Pagination = ({ currentPage, totalPages }) => {
     const classes = useStyles();
-
+    const dispatch = useDispatch();
     if (totalPages === 0) return null;
 
     const handlePrev = () => {
-        if (currentPage !== 1){
-        setPage((prevPage) => prevPage - 1);
+        if (currentPage !== 1) {
+            dispatch(selectPage(currentPage - 1));
+            // setPage((prevPage) => prevPage - 1);
         }
     };
 
     const handleNext = () => {
         if (currentPage !== totalPages) {
-            setPage((prevPage) => prevPage + 1);
+            dispatch(selectPage(currentPage + 1));
+
+            // setPage((prevPage) => prevPage + 1);
         }
     };
 

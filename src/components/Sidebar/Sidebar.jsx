@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     Divider,
     List,
@@ -17,7 +17,11 @@ import useStyles from "./styles";
 import { useGetGenresQuery } from "../../services/TMDB";
 import genresIcons from "../../assets/genres";
 import { useDispatch, useSelector } from "react-redux";
-import { selectGenreOrCategory } from "../../features/currentGenreOrCategory";
+import {
+    searchMovie,
+    selectGenreOrCategory,
+    selectPage,
+} from "../../features/currentGenreOrCategory";
 
 const categories = [
     { label: "Popular", value: "popular" },
@@ -33,9 +37,21 @@ const Sidebar = ({ setMobileOpen }) => {
     const classes = useStyles();
     const { data, error, isFetching } = useGetGenresQuery();
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        setMobileOpen(false);
+    }, [genreIdOrCategoryName]);
+
     return (
         <>
-            <Link to="/" className={classes.imageLink}>
+            <Link
+                to="/"
+                className={classes.imageLink}
+                onClick={() => {
+                    dispatch(searchMovie(""));
+                    dispatch(selectPage(1));
+                }}
+            >
                 <img
                     src={theme.palette.mode === "light" ? blue : red}
                     alt="Filmpire logo"
@@ -48,9 +64,11 @@ const Sidebar = ({ setMobileOpen }) => {
                 {categories.map(({ label, value }) => (
                     <Link key={value} className={classes.links} to={"/"}>
                         <ListItem
-                            onClick={() =>
-                                dispatch(selectGenreOrCategory(value))
-                            }
+                            onClick={() => {
+                                dispatch(selectGenreOrCategory(value));
+                                dispatch(searchMovie(""));
+                                dispatch(selectPage(1));
+                            }}
                         >
                             <ListItemIcon>
                                 <img
@@ -75,9 +93,11 @@ const Sidebar = ({ setMobileOpen }) => {
                     data.genres.map(({ name, id }) => (
                         <Link key={name} className={classes.links} to={"/"}>
                             <ListItem
-                                onClick={() =>
-                                    dispatch(selectGenreOrCategory(id))
-                                }
+                                onClick={() => {
+                                    dispatch(selectGenreOrCategory(id));
+                                    dispatch(searchMovie(""));
+                                    dispatch(selectPage(1));
+                                }}
                                 button
                             >
                                 <ListItemIcon>

@@ -59,11 +59,15 @@ const MovieInformation = () => {
     const [isMovieWatchlisted, setIsMovieWatchlisted] = useState(false);
 
     useEffect(() => {
-        setIsMovieFavorited(!!favoriteMovies?.results?.find((movie) => movie.id === data?.id))
-    }, [favoriteMovies, data])
+        setIsMovieFavorited(
+            !!favoriteMovies?.results?.find((movie) => movie.id === data?.id)
+        );
+    }, [favoriteMovies, data]);
     useEffect(() => {
-        setIsMovieWatchlisted(!!watchlistMovies?.results?.find((movie) => movie.id === data?.id))
-    }, [watchlistMovies, data])
+        setIsMovieWatchlisted(
+            !!watchlistMovies?.results?.find((movie) => movie.id === data?.id)
+        );
+    }, [watchlistMovies, data]);
     const addToFavorites = async () => {
         await axios.post(
             `https://api.themoviedb.org/3/account/${user.id}/favorite?api_key=${
@@ -96,7 +100,12 @@ const MovieInformation = () => {
 
     if (isFetching) {
         return (
-            <Box dispaly="flex" justifyContent="center" alignItems="center">
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                marginTop="100px"
+            >
                 <CircularProgress size="8rem" />
             </Box>
         );
@@ -139,7 +148,7 @@ const MovieInformation = () => {
                             gutterBottom
                             style={{ marginLeft: "10px" }}
                         >
-                            {data?.vote_average} / 10
+                            {data?.vote_average.toFixed(1)} / 10
                         </Typography>
                     </Box>
                     <Typography variant="h6" align="center" gutterBottom>
@@ -253,32 +262,36 @@ const MovieInformation = () => {
                             className={classes.buttonsContainer}
                         >
                             <ButtonGroup size="medium" variant="outlined">
-                                <Button
-                                    onClick={addToFavorites}
-                                    endIcon={
-                                        isMovieFavorited ? (
-                                            <FavoriteBorderOutlined />
-                                        ) : (
-                                            <Favorite />
-                                        )
-                                    }
-                                >
-                                    {isMovieFavorited
-                                        ? "Unfavorite"
-                                        : "Favorite"}
-                                </Button>
-                                <Button
-                                    onClick={addToWatchlist}
-                                    endIcon={
-                                        isMovieWatchlisted ? (
-                                            <Remove />
-                                        ) : (
-                                            <PlusOne />
-                                        )
-                                    }
-                                >
-                                    Watchlist
-                                </Button>
+                                {!!Object.keys(user).length && (
+                                    <Button
+                                        onClick={addToFavorites}
+                                        endIcon={
+                                            isMovieFavorited ? (
+                                                <FavoriteBorderOutlined />
+                                            ) : (
+                                                <Favorite />
+                                            )
+                                        }
+                                    >
+                                        {isMovieFavorited
+                                            ? "Unfavorite"
+                                            : "Favorite"}
+                                    </Button>
+                                )}
+                                {!!Object.keys(user).length && (
+                                    <Button
+                                        onClick={addToWatchlist}
+                                        endIcon={
+                                            isMovieWatchlisted ? (
+                                                <Remove />
+                                            ) : (
+                                                <PlusOne />
+                                            )
+                                        }
+                                    >
+                                        Watchlist
+                                    </Button>
+                                )}
                                 <Button
                                     sx={{ borderColor: "primary.main" }}
                                     endIcon={<ArrowBack />}
@@ -298,16 +311,21 @@ const MovieInformation = () => {
                     </div>
                 </Grid>
             </Grid>
-            <Box marginTop="5rem" width="100%">
-                <Typography variant="h3" gutterBottom align="center">
-                    You might also like
-                </Typography>
-                {recommendations ? (
-                    <MovieList movies={recommendations} numberOfMovies={12} />
-                ) : (
-                    <Box>Sorry, nothing was found.</Box>
-                )}
-            </Box>
+            {recommendations?.results?.length > 0 && (
+                <Box marginTop="5rem" width="100%">
+                    <Typography variant="h3" gutterBottom align="center">
+                        You might also like
+                    </Typography>
+                    {recommendations ? (
+                        <MovieList
+                            movies={recommendations}
+                            numberOfMovies={12}
+                        />
+                    ) : (
+                        <Box>Sorry, nothing was found.</Box>
+                    )}
+                </Box>
+            )}
             <Modal
                 closeAfterTransition
                 className={classes.modal}

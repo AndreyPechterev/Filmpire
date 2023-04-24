@@ -1,11 +1,12 @@
 import React from "react";
 import { Typography, Grid, Grow, Tooltip, Rating } from "@mui/material";
 import { Link } from "react-router-dom";
-
+import nogif from '../../assets/logo/no-poster.gif'
 import useStyles from "./styles";
 
 const Movie = ({ movie, i }) => {
     const classes = useStyles();
+
 
     return (
         <Grid
@@ -25,13 +26,16 @@ const Movie = ({ movie, i }) => {
                         src={
                             movie.poster_path
                                 ? `https://image.tmdb.org/t/p/w500/${movie.poster_path}`
-                                : "https://www.fillmurray.com/200/300"
+                                : nogif
                         }
                     />
                     <Typography className={classes.title} variant="h5">
                         {movie.title}
                     </Typography>
-                    <Tooltip disableTouchListener title={`${movie.vote_average} / 10`}>
+                    <Tooltip
+                        disableTouchListener
+                        title={`${movie.vote_average.toFixed(1)} / 10`}
+                    >
                         <div>
                             <Rating
                                 readOnly

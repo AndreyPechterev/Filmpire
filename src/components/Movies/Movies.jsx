@@ -1,15 +1,18 @@
 import React, { useState } from "react";
-import { Box, useMediaQuery } from "@mui/system";
-import { CircularProgress, Typography } from "@mui/material";
-import { useSelector } from "react-redux";
+import { Box } from "@mui/system";
+import { CircularProgress, Typography, useMediaQuery } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 import { useGetMoviesQuery } from "../../services/TMDB";
-import { MovieList, Pagination } from "..";
+import { FeaturedMovie, MovieList, Pagination } from "..";
 
 const Movies = () => {
-    const [page, setPage] = useState(1);
-    const { genreIdOrCategoryName, searchQuery } = useSelector(
+    const dispatch = useDispatch()
+    // const [page, setPage] = useState(1);
+    const lg = useMediaQuery((theme) => theme.breakpoints.only("lg"));
+    const { genreIdOrCategoryName, searchQuery, page } = useSelector(
         (state) => state.currentGenreOrCategory
     );
+    const numberOfMovies = lg ? 17 : 19;
     const { data, error, isFetching } = useGetMoviesQuery({
         genreIdOrCategoryName,
         page,
@@ -18,12 +21,12 @@ const Movies = () => {
 
     if (isFetching) {
         return (
-            <Box display="flex" justifyContent="center">
-                <CircularProgress size="4rem" />
+            <Box display="flex" justifyContent="center" alignItems='center' marginTop='100px'>
+                <CircularProgress size="8rem" />
             </Box>
         );
     }
-
+    
     if (!data.results.length) {
         return (
             <Box display="flex" alignItems="center" mt="20px">
@@ -40,8 +43,17 @@ const Movies = () => {
 
     return (
         <div>
-            <MovieList movies={data} numberOfMovies={18}/>
-            <Pagination currentPage={page} setPage={setPage} totalPages={data?.totalPages}/>
+            <FeaturedMovie movie={data?.results[0]} />
+            <MovieList
+                movies={data}
+                numberOfMovies={numberOfMovies}
+                excludeFirst
+            />
+            <Pagination
+                currentPage={page}
+                // setPage={setPage}
+                totalPages={data?.totalPages}
+            />
         </div>
     );
 };

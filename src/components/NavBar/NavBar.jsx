@@ -35,6 +35,7 @@ const NavBar = () => {
     const token = localStorage.getItem("request_token");
     const sessionIdFromLS = localStorage.getItem("session_id");
     const colorMode = useContext(ColorModeContext);
+    
     useEffect(() => {
         const loginUser = async () => {
             if (token) {
@@ -104,7 +105,7 @@ const NavBar = () => {
                                 <Avatar
                                     style={{ width: 30, height: 30 }}
                                     alt="Profile"
-                                    src="https://park-fest.ru/assets/img/speakers/default.gif"
+                                    src={`https://www.themoviedb.org/t/p/w64_and_h64_face${user?.avatar?.tmdb?.avatar_path}`}
                                 />
                             </Button>
                         )}
