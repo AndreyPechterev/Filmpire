@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     AppBar,
     IconButton,
@@ -23,6 +23,7 @@ import { Search } from "..";
 import { createSessionId, fetchToken, moviesApi } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, userSelector } from "../../features/auth";
+import { ColorModeContext } from "../../utils/ToggleColorMode";
 
 const NavBar = () => {
     const dispatch = useDispatch();
@@ -33,7 +34,7 @@ const NavBar = () => {
     const [mobileOpen, setMobileOpen] = useState(false);
     const token = localStorage.getItem("request_token");
     const sessionIdFromLS = localStorage.getItem("session_id");
-
+    const colorMode = useContext(ColorModeContext);
     useEffect(() => {
         const loginUser = async () => {
             if (token) {
@@ -41,7 +42,7 @@ const NavBar = () => {
                     const { data: userData } = await moviesApi.get(
                         `/account?session_id=${sessionIdFromLS}`
                     );
-                    dispatch(setUser(userData))
+                    dispatch(setUser(userData));
                 } else {
                     const sessionId = await createSessionId();
                     const { data: userData } = await moviesApi.get(
@@ -77,7 +78,7 @@ const NavBar = () => {
                     <IconButton
                         color="inherit"
                         sx={{ ml: 1 }}
-                        onClick={() => {}}
+                        onClick={() => colorMode.toggleColorMode()}
                     >
                         {theme.palette.mode === "dark" ? (
                             <Brightness7 />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Modal,
     Typography,
@@ -31,22 +31,68 @@ import useStyles from "./styles";
 import genresIcons from "../../assets/genres";
 import { selectGenreOrCategory } from "../../features/currentGenreOrCategory";
 import { MovieList } from "..";
+import { userSelector } from "../../features/auth";
+import { useGetListQuery } from "../../services/TMDB";
 
 const MovieInformation = () => {
     const classes = useStyles();
     const { id } = useParams();
+    const { user } = useSelector(userSelector);
     const { data, isFetching, error } = useGetMovieQuery(id);
+    const { data: favoriteMovies } = useGetListQuery({
+        listName: "favorite/movies",
+        accountId: user.id,
+        sessionId: localStorage.getItem("session_id"),
+        page: 1,
+    });
+    const { data: watchlistMovies } = useGetListQuery({
+        listName: "watchlist/movies",
+        accountId: user.id,
+        sessionId: localStorage.getItem("session_id"),
+        page: 1,
+    });
     const { data: recommendations, isFetching: isRecommenFetching } =
         useGetRecommendationsQuery({ list: "/recommendations", movie_id: id });
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
+    const [isMovieFavorited, setIsMovieFavorited] = useState(false);
+    const [isMovieWatchlisted, setIsMovieWatchlisted] = useState(false);
 
-    const isMovieFavorited = true;
-    const isMovieWatchlisted = true;
+    useEffect(() => {
+        setIsMovieFavorited(!!favoriteMovies?.results?.find((movie) => movie.id === data?.id))
+    }, [favoriteMovies, data])
+    useEffect(() => {
+        setIsMovieWatchlisted(!!watchlistMovies?.results?.find((movie) => movie.id === data?.id))
+    }, [watchlistMovies, data])
+    const addToFavorites = async () => {
+        await axios.post(
+            `https://api.themoviedb.org/3/account/${user.id}/favorite?api_key=${
+                process.env.REACT_APP_TMDB_KEY
+            }&session_id=${localStorage.getItem("session_id")}`,
+            {
+                media_type: "movie",
+                media_id: id,
+                favorite: !isMovieFavorited,
+            }
+        );
+        setIsMovieFavorited((prev) => !prev);
+    };
 
-    const addToFavorites = () => {};
-
-    const addToWatchlist = () => {};
+    const addToWatchlist = async () => {
+        await axios.post(
+            `https://api.themoviedb.org/3/account/${
+                user.id
+            }/watchlist?api_key=${
+                process.env.REACT_APP_TMDB_KEY
+            }&session_id=${localStorage.getItem("session_id")}`,
+            {
+                media_type: "movie",
+                media_id: id,
+                watchlist: !isMovieWatchlisted,
+            }
+        );
+        setIsMovieWatchlisted((prev) => !prev);
+    };
 
     if (isFetching) {
         return (
@@ -66,7 +112,12 @@ const MovieInformation = () => {
 
     return (
         <Grid container className={classes.containerSpaceAround}>
-            <Grid item sm={12} lg={4}>
+            <Grid
+                item
+                sm={12}
+                lg={4}
+                style={{ display: "flex", marginBottom: "30px" }}
+            >
                 <img
                     className={classes.poster}
                     src={`https://image.tmdb.org/t/p/w500/${data?.poster_path}`}
@@ -92,10 +143,8 @@ const MovieInformation = () => {
                         </Typography>
                     </Box>
                     <Typography variant="h6" align="center" gutterBottom>
-                        {data?.runtime}min{" "}
-                        {data?.spoken_languages.length > 0
-                            ? `/ ${data?.spoken_languages[0].name}`
-                            : ""}
+                        {data?.runtime}min | Language:
+                        {data?.spoken_languages[0].name}
                     </Typography>
                 </Grid>
                 <Grid item className={classes.genresContainer}>

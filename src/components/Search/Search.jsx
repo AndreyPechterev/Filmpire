@@ -4,16 +4,21 @@ import {Search as SearchIcon} from '@mui/icons-material'
 import useStyles from './styles'
 import { useDispatch } from 'react-redux'
 import { searchMovie } from '../../features/currentGenreOrCategory'
+import { useLocation } from 'react-router-dom'
 
 const Search = () => {
   const classes = useStyles()
   const [query,setQuery] = useState('')
   const dispatch = useDispatch()
+  const location = useLocation()
+
   const handleKeyPress = (event) => {
     if (event.key === 'Enter'){
       dispatch(searchMovie(query))
     }
   }
+
+  if (location.pathname !== '/') return null
 
   return (
     <div className={classes.searchContainer}>
