@@ -7,7 +7,7 @@ import useStyles from "./styles";
 const App = () => {
     const classes = useStyles()
     const theme = useTheme()
-    console.log(theme)
+
     return (
         <div className={classes.root}>
             <CssBaseline />

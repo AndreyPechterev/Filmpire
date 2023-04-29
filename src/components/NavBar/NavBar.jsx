@@ -35,7 +35,7 @@ const NavBar = () => {
     const token = localStorage.getItem("request_token");
     const sessionIdFromLS = localStorage.getItem("session_id");
     const colorMode = useContext(ColorModeContext);
-    
+
     useEffect(() => {
         const loginUser = async () => {
             if (token) {
@@ -53,7 +53,6 @@ const NavBar = () => {
                 }
             }
         };
-
         loginUser();
     }, [token]);
 

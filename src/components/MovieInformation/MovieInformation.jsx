@@ -51,6 +51,7 @@ const MovieInformation = () => {
         sessionId: localStorage.getItem("session_id"),
         page: 1,
     });
+    
     const { data: recommendations, isFetching: isRecommenFetching } =
         useGetRecommendationsQuery({ list: "/recommendations", movie_id: id });
     const [open, setOpen] = useState(false);
